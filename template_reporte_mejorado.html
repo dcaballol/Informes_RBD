@@ -1,0 +1,143 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Informe por RBD: {{ rbd }}</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 30px;
+            background-color: #f4f6f9;
+            color: #2c3e50;
+        }
+        h1, h2, h3, h4 {
+            color: #34495e;
+        }
+        .bloque {
+            background: white;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .resumen {
+            background: #d6eaf8;
+            border-left: 5px solid #2980b9;
+            padding: 10px;
+            margin-bottom: 15px;
+            font-size: 1.05em;
+        }
+        .grafico {
+            text-align: center;
+            margin: 15px 0;
+        }
+        .subtitulo {
+            font-weight: bold;
+            font-size: 1.3em;
+            margin-bottom: 10px;
+        }
+        .tabla {
+            margin-bottom: 10px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            font-size: 14px;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background: #ecf0f1;
+        }
+        .nota {
+            font-size: 0.9em;
+            font-style: italic;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+        .seccion-rbd {
+            background: #fef9e7;
+            padding: 10px 15px;
+            border-left: 6px solid #f1c40f;
+            margin: 40px 0 20px;
+            font-size: 1.4em;
+        }
+    </style>
+</head>
+<body>
+    <h1>Informe por RBD: {{ rbd }}</h1>
+    <div><strong>Fecha del reporte:</strong> {{ fecha }}</div>
+
+    {% if resumen_territorial and rbd != '[TOTAL]' %}
+    <div class="bloque">
+        <div class="subtitulo">Resumen Territorial (Promedio Santa Corina - últimos 2 años)</div>
+        {% if resumen_territorial.matricula %}
+        <h4>Matrícula Promedio Territorial</h4>
+        <div class="tabla">{{ resumen_territorial.matricula | safe }}</div>
+        {% endif %}
+        {% if resumen_territorial.asistencia %}
+        <h4>Asistencia Promedio Territorial</h4>
+        <div class="tabla">{{ resumen_territorial.asistencia | safe }}</div>
+        {% endif %}
+        {% if resumen_territorial.simce %}
+        {% for nivel, tabla in resumen_territorial.simce.items() %}
+            <h4>SIMCE Promedio Territorial - {{ nivel }}</h4>
+            <div class="tabla">{{ tabla | safe }}</div>
+        {% endfor %}
+        {% endif %}
+        <div class="nota">*Promedios por ítems del territorio Santa Corina</div>
+    </div>
+    {% endif %}
+
+    {% if rbd != '[TOTAL]' %}
+    <h2 class="seccion-rbd">Datos específicos del RBD {{ rbd }}</h2>
+    {% endif %}
+
+    {% if datos.matricula %}
+    <div class="bloque">
+        <div class="subtitulo">Matrícula</div>
+        {% if textos.matricula %}
+        <div class="resumen">{{ textos.matricula }}</div>
+        {% endif %}
+        <div class="grafico">
+            <img src="data:image/png;base64,{{ graficos.matricula }}" width="600">
+        </div>
+        <div class="tabla">{{ datos.matricula | safe }}</div>
+    </div>
+    {% endif %}
+
+    {% if datos.asistencia %}
+    <div class="bloque">
+        <div class="subtitulo">Asistencia</div>
+        {% if textos.asistencia %}
+        <div class="resumen">{{ textos.asistencia }}</div>
+        {% endif %}
+        <div class="grafico">
+            <img src="data:image/png;base64,{{ graficos.asistencia }}" width="600">
+        </div>
+        <div class="tabla">{{ datos.asistencia | safe }}</div>
+    </div>
+    {% endif %}
+
+    {% if datos.simce %}
+    {% for nivel, tabla in datos.simce.items() %}
+    <div class="bloque">
+        <div class="subtitulo">Resultados SIMCE - {{ nivel }}</div>
+        {% if textos.simce and textos.simce[nivel] %}
+        <div class="resumen">{{ textos.simce[nivel] }}</div>
+        {% endif %}
+        {% if graficos.simce and graficos.simce[nivel] %}
+        <div class="grafico">
+            <img src="data:image/png;base64,{{ graficos.simce[nivel] }}" width="600">
+        </div>
+        {% endif %}
+        <div class="tabla">{{ tabla | safe }}</div>
+    </div>
+    {% endfor %}
+    {% endif %}
+</body>
+</html>
