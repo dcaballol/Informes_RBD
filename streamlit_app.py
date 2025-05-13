@@ -1,4 +1,3 @@
-
 import streamlit as st
 import pandas as pd
 import os
@@ -9,13 +8,13 @@ from jinja2 import Environment, FileSystemLoader
 from datetime import datetime
 
 # === CONFIG ===
-base_path = r"C:/Users/Daniel Contreras/Desktop/proyecto_reportes_educacion/data"
+base_path = "."
 template_name = "template_reporte_mejorado.html"
 
 # === CARGA DE DATOS ===
-df_matricula = pd.read_excel(os.path.join(base_path, "matricula", "Matricula_EE_resumen.xlsx"))
-df_asistencia = pd.read_excel(os.path.join(base_path, "asistencia", "Asistencia_EE_resumen.xlsx"))
-df_simce = pd.read_excel(os.path.join(base_path, "simce", "SIMCE_puntajes_resumen.xlsx"))
+df_matricula = pd.read_excel("Matricula_EE_resumen.xlsx")
+df_asistencia = pd.read_excel("Asistencia_EE_resumen.xlsx")
+df_simce = pd.read_excel("SIMCE_puntajes_resumen.xlsx")
 
 df_matricula.rename(columns={"AGNO": "Año"}, inplace=True)
 df_asistencia.rename(columns={"AGNO": "Año"}, inplace=True)
@@ -164,7 +163,7 @@ if st.button("🧾 Generar informe completo y descargar"):
                 graficos["simce"] = graficos_simce
 
         # RENDER HTML
-        env = Environment(loader=FileSystemLoader(os.path.join(base_path, "templates")))
+        env = Environment(loader=FileSystemLoader("."))
         template = env.get_template(template_name)
         html = template.render(
             rbd=rbd_label,
@@ -181,4 +180,3 @@ if st.button("🧾 Generar informe completo y descargar"):
             file_name=f"informe_RBD_{rbd_label}.html",
             mime="text/html"
         )
-
